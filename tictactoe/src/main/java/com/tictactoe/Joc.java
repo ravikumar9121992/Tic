@@ -13,7 +13,7 @@ public class Joc {
     private static boolean EMPAT = false;
     private static boolean ORDRE = true;
     private static boolean ESPERA_BOTO = true;
-    // endregion
+    // endregion Variables
 
     // region Errors al programa
     private static boolean ERROR_PROGRAMA = false;
@@ -22,20 +22,18 @@ public class Joc {
     private static boolean ERROR_CASELLA_OCUPADA_JOC = false;
     private static String ERROR_NOM_JUGADOR_JOC = "";
     private static boolean ERROR_ELECCIO_FINAL = false;
-    // endregion
+    private static String ERROR_ELECCIO_FINAL_MISSATGE = "";
+    // endregion Errors al programa
 
     // region Objectes
     private static Taulell t;
     private static final Jugador x = new Jugador("Arnau", 'X');
     private static final Jugador o = new Jugador("Uanra", 'O');
     private static final Scanner scan = new Scanner(System.in);
-    // endregion
+    // endregion Objectes
 
-    
-    // region Maquina de estats
+    // region Maquina d'estats
     private EstatPrograma estat;
-
-    private
 
     enum EstatPrograma {
         INICI,
@@ -44,6 +42,12 @@ public class Joc {
         TANCAR
     }
 
+    /**
+     * Estructura de funcionament del joc.
+     * 
+     * @throws InterruptedException
+     * @throws IOException
+     */
     public void run() throws InterruptedException, IOException {
         estat = EstatPrograma.INICI;
         while (true) {
@@ -60,6 +64,7 @@ public class Joc {
                     finalJoc();
                     break;
                 case TANCAR:
+                    tancar();
                     System.exit(0);
                     break;
 
@@ -68,12 +73,13 @@ public class Joc {
             }
         }
     }
-    // endregion
+    // endregion Maquina d'estats
 
-
-    // region inici
+    // region Inici
     /**
-     * Primera "etapa" del programa, pregunta si necesites una explicació de com funciona el programa.
+     * Primera "etapa" del programa, pregunta si necesites una explicació de com
+     * funciona el programa.
+     * 
      * @throws InterruptedException
      * @throws IOException
      */
@@ -112,6 +118,7 @@ public class Joc {
 
     /**
      * Petita explicació de com funciona el programa.
+     * 
      * @throws InterruptedException
      * @throws IOException
      */
@@ -122,9 +129,11 @@ public class Joc {
         borrarLinea("continuar");
         System.out.print("Suposo que ja saps com funciona, no és molt complicat.\n\n");
         borrarLinea("continuar");
-        System.out.print("Tots hem jugat alguna vegada amb la persona amb la qual compartíem taula a classe quan el tema no interessava... \n\n");
+        System.out.print(
+                "Tots hem jugat alguna vegada amb la persona amb la qual compartíem taula a classe quan el tema no interessava... \n\n");
         borrarLinea("continuar");
-        System.out.print("Bé, principalment va del fet que col·loquis la teva fitxa a una casella buida d'un taulell de 3x3");
+        System.out.print(
+                "Bé, principalment va del fet que col·loquis la teva fitxa a una casella buida d'un taulell de 3x3");
         Thread.sleep(2000);
         System.out.print(", per torns");
         Thread.sleep(2000);
@@ -137,23 +146,24 @@ public class Joc {
 
     /**
      * "Botó" que s'escriu i s'elimina un cop hem premut la tecla enter.
+     * 
      * @throws IOException
      * @throws InterruptedException
      */
-    public void borrarLinea( String accio) throws IOException, InterruptedException {
+    public void borrarLinea(String accio) throws IOException, InterruptedException {
         Thread.sleep(2000);
 
         System.out.print("(Prem enter per " + accio + ".)");
         while (true) {
             DataInputStream tecla = new DataInputStream(System.in);
-            if (tecla.read()==13) {
+            if (tecla.read() == 13) {
                 System.out.print("\033[F                                                                          \r");
                 break;
             }
         }
         Thread.sleep(250);
     }
-    // endregion
+    // endregion Inici
 
     // region Joc
     /**
@@ -164,13 +174,11 @@ public class Joc {
 
         while (true) {
 
-            
             try {
-            netejaPantalla();
+                netejaPantalla();
             } catch (InterruptedException e) {
-            e.printStackTrace();
+                e.printStackTrace();
             }
-            
 
             graph();
 
@@ -220,6 +228,9 @@ public class Joc {
      * Agafa la coordenada indicada pel jugador i comproba si existeis i si está
      * ocupada, imprimeix errors en diferents casos.
      * 
+     * Si el programa falla pel fet de que la casella indicada ja está marcada,
+     * salta una alerta.
+     * 
      * @param j Jugador del torn actual.
      */
     public void moviment(Jugador j) {
@@ -264,7 +275,7 @@ public class Joc {
                         posicion[3][5].equals(" " + String.valueOf(j.getFitxa()) + " ") &&
                         posicion[5][5].equals(" " + String.valueOf(j.getFitxa()) + " ")
                 ||
-                // endregion
+                // endregion verticals
                 // region diagonales
                 posicion[1][1].equals(" " + String.valueOf(j.getFitxa()) + " ") &&
                         posicion[3][3].equals(" " + String.valueOf(j.getFitxa()) + " ") &&
@@ -275,7 +286,7 @@ public class Joc {
                         posicion[3][3].equals(" " + String.valueOf(j.getFitxa()) + " ") &&
                         posicion[5][1].equals(" " + String.valueOf(j.getFitxa()) + " ")
                 ||
-                // endregion
+                // endregion diagonals
                 // region horitzontals
                 posicion[1][1].equals(" " + String.valueOf(j.getFitxa()) + " ") &&
                         posicion[1][3].equals(" " + String.valueOf(j.getFitxa()) + " ") &&
@@ -290,7 +301,7 @@ public class Joc {
                 posicion[5][1].equals(" " + String.valueOf(j.getFitxa()) + " ") &&
                         posicion[5][3].equals(" " + String.valueOf(j.getFitxa()) + " ") &&
                         posicion[5][5].equals(" " + String.valueOf(j.getFitxa()) + " ")
-        // endregion
+        // endregion horitzontals
         ) {
             System.out.println("jiji");
             GUANYADOR = j.getNom();
@@ -302,31 +313,32 @@ public class Joc {
             Taulell.setTotalOcupat(0);
         }
     }
-    // endregion
+    // endregion Joc
 
-    // region final
-    public void finalJoc() {
-        try {
-            netejaPantalla();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    // region Final
+    /**
+     * Pantalla final del joc, dona 2 opcions y te avisos d'error.
+     * 
+     * @throws InterruptedException
+     */
+    public void finalJoc() throws InterruptedException {
+        netejaPantalla();
 
         if (ERROR_PROGRAMA) {
             System.out.println("\n  ALERTA");
             if (ERROR_ELECCIO_FINAL) {
-                System.out.println("  - No es un valor valid.\n");
-                System.out.println("Has d'escollir una d'aquestes.");
+                System.out.println("  - " + ERROR_ELECCIO_FINAL_MISSATGE + " No es un valor valid.\n");
+                System.out.println("  Has d'escollir una d'aquestes.");
                 ERROR_ELECCIO_FINAL = false;
             }
             ERROR_PROGRAMA = false;
         } else if (HA_GUANYAT) {
-            System.out.println("\n\t" + GUANYADOR + " ha resultat guanyador!\n");
-            System.out.println(" Tornar a jugar?");
+            System.out.println("\n  " + GUANYADOR + " ha resultat guanyador!\n");
+            System.out.println("  Tornar a jugar?");
             HA_GUANYAT = false;
         } else if (EMPAT) {
-            System.out.println("\n\t S'ha empatat.\n");
-            System.out.println(" Tornar a jugar?");
+            System.out.println("\n  S'ha empatat.\n");
+            System.out.println("  Tornar a jugar?");
             EMPAT = false;
         }
 
@@ -335,7 +347,14 @@ public class Joc {
         opcioFinalJoc(scan.nextLine());
     }
 
-    private void opcioFinalJoc(String decisio) {
+    /**
+     * Determina quina es la seguent acció un cop donada la decisió a la pantalla
+     * final.
+     * 
+     * @param decisio
+     * @throws InterruptedException
+     */
+    private void opcioFinalJoc(String decisio) throws InterruptedException {
         switch (decisio.toUpperCase()) {
             case "SI":
                 for (String posicio : t.getCasellesOcupades().keySet()) {
@@ -344,23 +363,39 @@ public class Joc {
                 estat = EstatPrograma.JOC;
                 break;
             case "NO":
-                try {
-                    netejaPantalla();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                netejaPantalla();
                 estat = EstatPrograma.TANCAR;
                 break;
 
             default:
                 ERROR_PROGRAMA = true;
                 ERROR_ELECCIO_FINAL = true;
+                ERROR_ELECCIO_FINAL_MISSATGE = decisio;
                 break;
         }
     }
 
-    // endregion
+    // endregion Final
 
+    // region Tancar
+    /**
+     * Compte enrere per tancar el programa.
+     * 
+     * @throws InterruptedException
+     */
+    private void tancar() throws InterruptedException {
+        System.out.print("\n  Fins aviat!\n    Tancant en     ");
+        int contTancar = 5;
+        while (contTancar != -1) {
+            System.out.print("\b\b\b\b" + contTancar + "...");
+            Thread.sleep(1000);
+            contTancar--;
+        }
+        netejaPantalla();
+    }
+    // endregion Tancar
+
+    //region Mètodes
     /**
      * Neteja la terminal esperant un segon per una continuitat menys brusca.
      * 
@@ -369,6 +404,6 @@ public class Joc {
     public void netejaPantalla() throws InterruptedException {
         Thread.sleep(1000);
         System.out.print("\033[H\033[2J");
-        System.out.flush();        
     }
+    //endregion Mètodes
 }
